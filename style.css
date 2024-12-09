@@ -1,0 +1,46 @@
+body {
+    margin:0;
+    width:100vw;
+    height:100vh;
+}
+.Content {
+    min-width:100vw;
+    min-height:100vh;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    padding:20px;
+    box-sizing:border-box;
+}
+.MainInventory {
+    padding:20px;
+    background-color:rgb(220,220,220);
+    border-radius:5px;
+    display:inline-block;
+}
+.Crafting {
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    column-gap:20px;
+    margin-bottom:20px;
+}
+.inventory {
+    display:flex;
+    flex-direction:column;
+    row-gap:5px;
+}
+.itemRow {
+    display:flex;
+    column-gap:5px;
+}
+.itemSlot {
+    width:50px;
+    height:50px;
+    padding:5px;
+    background-color:white;
+    border-radius:5px;
+}
+.itemSlot:hover {
+    filter:brightness(0.9);
+}
