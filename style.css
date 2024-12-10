@@ -1,7 +1,17 @@
+@import url('https://fonts.googleapis.com/css2?family=Geist+Mono:wght@100..900&family=Montserrat:ital,wght@0,100..900;1,100..900&family=Parkinsans:wght@300..800&family=Rethink+Sans:ital,wght@0,400..800;1,400..800&family=Roboto+Mono:ital,wght@0,100..700;1,100..700&display=swap');
+
 body {
     margin:0;
     width:100vw;
     height:100vh;
+    font-size:21px;
+    user-select:none;
+}
+* {
+    font-family: "Roboto Mono", monospace;
+    font-optical-sizing: auto;
+    font-style: normal;
+    margin:0;   
 }
 .Content {
     min-width:100vw;
@@ -11,6 +21,13 @@ body {
     justify-content:center;
     padding:20px;
     box-sizing:border-box;
+}
+.Inventories {
+    display:flex;
+    flex-direction:column;
+}
+.inventoryContainerHeader {
+    margin-top:20px;
 }
 .MainInventory {
     padding:20px;
@@ -25,6 +42,12 @@ body {
     column-gap:20px;
     margin-bottom:20px;
 }
+.MinionInventory {
+    padding:20px;
+    background-color:rgb(220,220,220);
+    border-radius:5px;
+    display:inline-block;
+}
 .inventory {
     display:flex;
     flex-direction:column;
@@ -34,13 +57,46 @@ body {
     display:flex;
     column-gap:5px;
 }
-.itemSlot {
+.itemSlot, .specialItemSlot {
     width:50px;
     height:50px;
     padding:5px;
     background-color:white;
     border-radius:5px;
 }
-.itemSlot:hover {
-    filter:brightness(0.9);
+.itemSlot:hover, .specialItemSlot:hover {
+    filter:brightness(0.9) saturate(1.1);
+}
+.item {
+    width:50px;
+    height:50px;
+    border-radius:50px;
+    background-color:rgb(255, 79, 161);
+}
+.ItemTooltip {
+    --x:-500px;
+    --y:-500px;
+    position:absolute;
+    top:0;
+    left:0;
+    transform:translate(calc(var(--x) + 20px),calc(var(--y) - 50%));
+    background-color:rgba(255,255,255,0.7);
+    backdrop-filter:blur(5px);
+    padding:10px 20px;
+    border:3px solid rgb(220,220,220);
+    border-radius:5px;
+    z-index:10000;
+    pointer-events:none;
+}
+.ItemTooltip.state-displayed {
+    display:block;
+}
+.ItemTooltip.state-hidden {
+    display:none;
+}
+.itemTooltipName {
+    font-weight:bold;
+}
+.itemTooltipLore {
+    color:rgb(100,100,100)
 }
