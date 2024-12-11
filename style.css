@@ -72,6 +72,7 @@ body {
     height:50px;
     border-radius:50px;
     background-color:rgb(255, 79, 161);
+    pointer-events:none;
 }
 .ItemTooltip {
     --x:-500px;
