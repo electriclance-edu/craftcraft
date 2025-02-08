@@ -20,42 +20,120 @@ body {
     display:flex;
     align-items:center;
     justify-content:center;
-    padding:20px;
     box-sizing:border-box;
+    pointer-events:none;
 }
-.Inventories {
+.Cursor {
+    --color:rgba(0,0,0,0.05);
+    width:50px;
+    height:50px;
+    transform:translate(calc(var(--x) - 50%),calc(var(--y) - 50%));
+    position:absolute;
+    top:0;
+    left:0;
+    border-radius:100px;
+    background-color:var(--color);
+    z-index:9000;
+    transition:0.2s;
+    transition-timing-function:cubic-bezier(0, 0, 0, 2);
+}
+.Cursor.state-active {
+    width:60px;
+    height:60px;
+}
+.cursorable {
+    pointer-events:all;
+}
+.cursorable * {
+    pointer-events:none;
+}
+.WorldTileCenterer {
+    --x:0;
+    --y:0;
+    transform:translate(calc(var(--x) * -350px), calc(var(--y) * -350px));
+    min-width:100vw;
+    min-height:100vh;
+    transition:0.4s;
+}
+.WorldTiles {
+    position:absolute;
+    top:50%;
+    left:50%;
+    transform:translate(-50%,-50%);
     display:flex;
     flex-direction:column;
+    row-gap:10px;
 }
-.inventoryContainerHeader {
-    margin-top:20px;
+.worldTileRow {
+    display:flex;
+    column-gap:10px;
+}
+.worldTile {
+    position:relative;
+    width:350px;
+    height:350px;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+}
+.worldTileName {
+    position:absolute;
+    top:-2px;
+    left:50%;
+    transform:translate(-50%,-100%);
     text-shadow:0 0 10px white,
                 0 0 10px white,
                 0 0 10px white,
                 0 0 10px white;
     backdrop-filter:blur(5px);
-    width:fit-content;
+    text-decoration:underline;
+    white-space:nowrap;
 }
-.MainInventory {
+.PlayerWorldTile.worldTile .craftingContainer {
+    margin-top:5px;
+}
+.TabsSelection {
+    width:fit-content;
+    display:flex;
+    column-gap: 20px;
+    margin-bottom:5px;
+    pointer-events:all;
+}
+.TabsSelection p:hover {
+    font-weight:bold;
+}
+.TabsContainer {
+    width:634px;
+    overflow-x:hidden;
+}
+.Tabs {
+    --x:0;
+    transition:0.2s;
+    transform:translatex(var(--x));
+    display:flex;
+    width:fit-content;
+    justify-content:flex-start;
+}
+.Tab {
+    width:634px;
+    flex-shrink:1;
+}
+.inventoryContainer {
     padding:20px;
+    /* background-image:url(/resources/img/textured_bg.png);
+    background-size:contain; */
     background-color:rgba(200,200,200,0.5);
     backdrop-filter:blur(5px);
+    border-bottom:5px solid rgb(200,200,200);
     border-radius:5px;
+    box-shadow:5px 5px 5px rgba(0,0,0,0,0.5);
     display:inline-block;
 }
-.Crafting {
+.craftingContainer {
     display:flex;
     align-items:center;
     justify-content:center;
     column-gap:20px;
-    margin-bottom:20px;
-}
-.MinionInventory {
-    padding:20px;
-    background-color:rgba(200,200,200,0.5);
-    backdrop-filter:blur(5px);
-    border-radius:5px;
-    display:inline-block;
 }
 .inventory {
     display:flex;
@@ -67,11 +145,23 @@ body {
     column-gap:5px;
 }
 .itemSlot, .specialItemSlot {
+    --itemCount:"";
     width:60px;
     height:60px;
     padding:3px;
     background-color:white;
     border-radius:5px;
+    pointer-events:all;
+    position:relative;
+}
+.itemSlot:after, .specialItemSlot:after, .GhostItemCounter {
+    content:var(--itemCount);
+    display:block;
+    position:absolute;
+    right:2px;
+    bottom:0;
+    -webkit-text-stroke: 5px white;
+    paint-order: stroke fill;
 }
 .itemSlot:hover, .specialItemSlot:hover {
     filter:brightness(0.95) saturate(1.05);
@@ -84,13 +174,13 @@ body {
     background-size:contain;
     pointer-events:none;
 }
-.ItemTooltip {
+.ItemTooltip, .GeneralTooltip {
     --x:-500px;
     --y:-500px;
     position:absolute;
     top:0;
     left:0;
-    transform:translate(calc(var(--x) + 20px),calc(var(--y) - 50%));
+    transform:translate(calc(var(--x) + 50px),calc(var(--y) - 50%));
     background-color:rgba(255,255,255,0.7);
     backdrop-filter:blur(5px);
     padding:10px 20px;
@@ -99,47 +189,59 @@ body {
     max-width:30vw;
     z-index:10000;
     pointer-events:none;
+    transition:0.2s opacity;
 }
-.minionDisplay {
-    width:66px;
-    height:66px;
-    border-radius:100px;
-    background-color:white;
-    position:relative;
-    margin-right:6px;
+.ItemTooltip.state-lefty, .GeneralTooltip.state-lefty {
+    transform:translate(calc(var(--x) - 50px - 100%),calc(var(--y) - 50%));
 }
-.minionIcon {
-    position:absolute;
-    bottom:-10px;
-    left:50%;
-    transform:translatex(-50%);
-    width:calc(130px * 0.7);
-    height:calc(180px * 0.7);
-    background-image:var(--url);
+.tooltipper {
+    pointer-events:all;
+}
+.tooltipper * {
+    pointer-events:none;
+}
+.item-minion {
+    scale:1.5;
     background-size:contain;
-    animation:1.5s infinite alternate-reverse linear dance;
+    background-position:center;
+    background-repeat:no-repeat;
+    animation:0.3s infinite alternate-reverse ease-in dance;
 }
 @keyframes dance {
     from {
-        transform:translatex(-50%) rotateY(0deg) scale(1,1)
+        transform-origin:bottom;
+        transform:rotateZ(-15deg) rotateX(0) rotateY(15deg) translatey(0px);
     }
     to {
-        transform:translatex(-50%) rotateY(360deg) scale(1.5,1)
+        transform-origin:bottom;
+        transform:rotateZ(15deg) rotateX(30deg) rotateY(-15deg) translatey(3px);
     }
 }
 *.state-displayed {
-    display:block;
+    opacity:1;
 }
 *.state-hidden {
-    display:none;
+    opacity:0;
 }
-.itemTooltipName {
+.itemTooltipName, .generalTooltipName {
     font-weight:bold;
 }
-.itemTooltipLore {
+.generalTooltipDesc {
+    line-height:1em;
+    font-size:0.9em;
+    margin-bottom:10px;
+}
+.itemTooltipLore, .generalTooltipLore {
     color:rgb(100,100,100);
     font-size:0.8em;
     line-height:1em;
+    white-space:pre-wrap;
+}
+.itemTooltipProperties {
+    margin-top:5px;
+}
+.itemTooltipProperties span {
+    color:rgb(33, 168, 150)
 }
 .GhostItem {
     --x:-500px;
@@ -151,6 +253,9 @@ body {
     transform:translate(calc(var(--x) - 50%),calc(var(--y) - 50%));
     pointer-events:none;
     user-select:none;
+    background-size:contain;
+    background-position:center;
+    background-repeat:no-repeat;
 }
 .Background {
     width:100vw;
@@ -158,12 +263,14 @@ body {
     position:absolute;
     top:0;
     left:0;
-    z-index:-1000;
+    z-index:0;
+    pointer-events:all;
 }
 .backgroundObject {
     --x:0px;
     --y:0px;
     --url:url(resources/img/structure/tree1.PNG);
+    --size:1;
     background-image:var(--url);
     background-size:contain;
     width:150px;
@@ -171,5 +278,16 @@ body {
     position:absolute;
     top:0;
     left:0;
-    transform:translate(calc(var(--x) - 50%),calc(var(--y) - 50%));
+    transform:translate(calc(var(--x)*1% - 50%),calc(var(--y)*1% - 50%));
+    z-index:calc(-1000 + var(--y));
+    scale:var(--size);
+}
+.debug_test {
+    z-index:1;
+    position:absolute;
+    top:0;
+    left:0;
+    width:100vw;
+    height:100vh;
+    backdrop-filter:invert(1);
 }
